@@ -352,7 +352,7 @@
             <h4 class="modal-title">Foto</h4>
           </div>
           <div class="modal-body">
-            <img id="tampil_foto" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png">
+            <img id="tampil_foto" width="100%" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png">
           </div>
 
           <div class="modal-footer">
@@ -415,6 +415,11 @@ tinymce.init({
               "orderable": false, //set not orderable
           },
           ],
+        });
+
+        $("#btn_add_data").on('click',function(){
+          //e.preventDefault();
+          $.when(addData()).done(upload_image());
         });
 
         //Coba tampil data dengan ajax
@@ -596,26 +601,31 @@ tinymce.init({
         //menampilkan Modal Tampil Foto
         $('#tbl_data').on('click','.btn_tampil_foto',function(){
           var incident_id = $(this).attr('data-id');
-          var img_name_jpg;
-          var img_name_png;
+          var img_name;
           $.ajax({
             url : '<?php echo base_url();?>C_Index/ambilDataGambar',
             type : 'POST',
             dataType : 'json',
             data : {incident_id:incident_id},
             success : function(response){
-              img_name_png = response.incident_picture_name + ".png";
-              img_name_jpg = response.incident_picture_name + ".jpg";
+              img_name = response;
+
+              if (img_name == null){
+                //alert("Gambar tidak ada");
+                $('#tampil_foto').attr("src","https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png");
+                $('#lihatFotoModal').modal('show');
+              } else {
+                $('#tampil_foto').attr("src","<?php echo base_url();?>" + img_name);
+                $('#lihatFotoModal').modal('show');
+              }
               
               //if (img_name_jpg)
               //img_name = response.incident_picture_name;
-               console.log(img_name_png);
-               console.log(img_name_jpg);
-              // if ( !($('#tampil_foto').attr("src","<?php echo base_url();?>uploads/"+ img_name_png))){
-              //   console.log("Salah");
-              // }
-              $('#tampil_foto').attr("src","<?php echo base_url();?>uploads/"+ img_name_png);
-              $('#lihatFotoModal').modal('show');
+               console.log(img_name);
+               
+              
+              // $('#tampil_foto').attr("src","<?php echo base_url();?>" + img_name);
+              // $('#lihatFotoModal').modal('show');
 
             }
 
@@ -677,7 +687,7 @@ tinymce.init({
             $.ajax({
                 url: '<?php echo base_url(); ?>C_Index/tambahData',
                 type: 'POST',
-                async : false,
+                //async : false,
                 //enctype: 'multipart/form-data',
                 
                 data: {incident_name:incident_name,incident_date:incident_date,incident_time_begin:incident_time_begin,incident_time_end:incident_time_end,incident_location:incident_location,incident_detail:incident_detail, incident_affected:incident_affected, incident_remark:incident_remark, incident_status:incident_status},
@@ -705,6 +715,8 @@ tinymce.init({
 
         }
 
+        
+
         //upload image
         function upload_image(){
           var form = document.getElementById('add_data_form');
@@ -716,17 +728,14 @@ tinymce.init({
             processData:false,
              contentType:false,
              cache:false,
-             async:false,
+             async:true,
              success: function(data){
               alert("Upload image berhasil");
              }
           });
         }
 
-        $("#btn_add_data").on('click',function(e){
-          e.preventDefault();
-          $.when(addData()).done(upload_image());
-        });
+        
 
 
         //Memunculkan modal edit

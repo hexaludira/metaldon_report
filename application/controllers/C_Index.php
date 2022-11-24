@@ -134,14 +134,6 @@ class C_Index extends CI_Controller {
 		
 	}
 
-	function hapusGambar(){
-		$hapus = unlink("uploads/Kebakaran_Office_2022-11-23.jpg");
-
-		if($hapus) {
-			echo "Gambar sudah dihapus";
-		}
-
-	}
 
 	function doUpload(){
 		$data = $this->M_Incident->getDataLast();
@@ -197,13 +189,34 @@ class C_Index extends CI_Controller {
 	//Ambil nama gambar dari DB
 	function ambilDataGambar(){
 		$incident_id = $this->input->post('incident_id');
-		$data = $this->M_Incident->getImageNameByID($incident_id);
+		$img_name = $this->M_Incident->getImageNameByID($incident_id)->incident_picture_name;
+		
+		if ($img_name != null){
+			$glob_find = glob("uploads/".$img_name."*");
+			$data = $glob_find[0];
+			//echo $data;
+		} else {
+			$data = null;
+			echo $data;
+		}
+		
+
+		// if($glob_find){
+		// 	$data = $glob_find[0];
+		// }else {
+		// 	//echo "Data tidak ada";
+		// 	$data = null;
+		// 	echo $data;
+		// }
+
+		
+
 
 		echo json_encode($data);
 	}
 
 	function cekEkstensi(){
-		$incident_id = "91";
+		$incident_id = "108";
 		$data = $this->M_Incident->getImageNameByID($incident_id)->incident_picture_name;
 
 		// $this->load->library('image_lib');
@@ -217,9 +230,9 @@ class C_Index extends CI_Controller {
 		// echo $path . $data .'*';
 		$glob_find = glob("uploads/".$data."*");
 		echo $glob_find[0];
-		if(unlink($glob_find[0])){
-			echo "Berhasil";
-		}
+		// if(unlink($glob_find[0])){
+		// 	echo "Berhasil";
+		// }
 		//print_r(glob("uploads/Kejadian OOO_2022-11-04*"));
 		//echo glob($path . $data .'*');
 
