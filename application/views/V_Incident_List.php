@@ -265,14 +265,14 @@
                                 </div>
                                 <div class="form-group">
                                   <label><h4>Picture</h4></label>
-                                  <input type="file" class="form-control file-upload-info" accept="image/*" onchange="updatePreview(this, 'image-preview')" id="incident_picture_edit">
-                                  <button class="btn btn-danger">X</button>
+                                  <input type="file" class="form-control file-upload-info" accept="image/*" onchange="updatePreview(this, 'image-preview-edit')" id="incident_picture_edit">
+                                  <button type="button" class="btn btn-link" id="btn_reset_gambar_edit">X Delete Picture</button>
                                   <!-- <span class="input-group-append">
                                     <button class="file-upload-browse btn btn-primary" type="button">Choose File</button>
                                   </span> -->
                                 </div>
                                 <div class="form-group">
-                                  <img id="image-preview" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png" class="" width="200" height="150"/>
+                                  <img id="image-preview-edit" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png" class="" width="200" height="150"/>
                                 </div>
                                 <div class="form-group">
                                   <label><h4>Remark</h4></label>
@@ -335,6 +335,28 @@
 
           <div class="modal-footer">
            <button type="button" class="btn btn-danger" id="btn_confirm_hapus">Hapus</button>
+           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>      
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Modal Lihat Foto -->
+    <div id="lihatFotoModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal Content -->
+        <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">X</button>
+            <h4 class="modal-title">Foto</h4>
+          </div>
+          <div class="modal-body">
+            <img id="tampil_foto" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png">
+          </div>
+
+          <div class="modal-footer">
+           <!-- <button type="button" class="btn btn-danger" id="btn_confirm_hapus">Hapus</button> -->
            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>      
         </div>
@@ -557,9 +579,48 @@ tinymce.init({
           $('#image-preview').attr("src","https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png");
         }
 
+        function reset_field_gambar_edit(){
+          $('#incident_picture_edit').val("");
+          $('#image-preview-edit').attr("src","https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png");
+        }
+
         //button hapus gambar
         $('#btn_reset_gambar').click(function(){
           reset_field_gambar();
+        });
+
+        $('#btn_reset_gambar_edit').click(function(){
+          reset_field_gambar_edit();
+        });
+
+        //menampilkan Modal Tampil Foto
+        $('#tbl_data').on('click','.btn_tampil_foto',function(){
+          var incident_id = $(this).attr('data-id');
+          var img_name_jpg;
+          var img_name_png;
+          $.ajax({
+            url : '<?php echo base_url();?>C_Index/ambilDataGambar',
+            type : 'POST',
+            dataType : 'json',
+            data : {incident_id:incident_id},
+            success : function(response){
+              img_name_png = response.incident_picture_name + ".png";
+              img_name_jpg = response.incident_picture_name + ".jpg";
+              
+              //if (img_name_jpg)
+              //img_name = response.incident_picture_name;
+               console.log(img_name_png);
+               console.log(img_name_jpg);
+              // if ( !($('#tampil_foto').attr("src","<?php echo base_url();?>uploads/"+ img_name_png))){
+              //   console.log("Salah");
+              // }
+              $('#tampil_foto').attr("src","<?php echo base_url();?>uploads/"+ img_name_png);
+              $('#lihatFotoModal').modal('show');
+
+            }
+
+          });
+
         });
 
         //Hapus Data dengan konfirmasi
@@ -616,7 +677,7 @@ tinymce.init({
             $.ajax({
                 url: '<?php echo base_url(); ?>C_Index/tambahData',
                 type: 'POST',
-
+                async : false,
                 //enctype: 'multipart/form-data',
                 
                 data: {incident_name:incident_name,incident_date:incident_date,incident_time_begin:incident_time_begin,incident_time_end:incident_time_end,incident_location:incident_location,incident_detail:incident_detail, incident_affected:incident_affected, incident_remark:incident_remark, incident_status:incident_status},
@@ -655,7 +716,7 @@ tinymce.init({
             processData:false,
              contentType:false,
              cache:false,
-             async:true,
+             async:false,
              success: function(data){
               alert("Upload image berhasil");
              }
@@ -667,7 +728,78 @@ tinymce.init({
           $.when(addData()).done(upload_image());
         });
 
-        //Menambahkan Data ke database
+
+        //Memunculkan modal edit
+        $("#tbl_data").on('click','.btn_edit',function(){
+            var incident_id = $(this).attr('data-id');
+            console.log(incident_id);
+            //jQuery.noConflict();
+            
+            //var incident_id = 
+            $.ajax({
+                url: '<?php echo base_url(); ?>C_Index/editData',
+                type: 'POST',
+                data: {incident_id:incident_id},
+                dataType: 'json',
+                success: function(response){
+                    //console.log('ok');
+                    //console.log(response[0].incident_name);
+                    $("#editIncidentModal").modal('show');
+                    $('#incident_id_edit').val(response[0].incident_id);
+                    $('#incident_name_edit').val(response[0].incident_name);
+                    $('#incident_date_edit').val(response[0].incident_date);
+                    $('#incident_time_begin_edit').val(response[0].incident_time_begin);
+                    $('#incident_time_end_edit').val(response[0].incident_time_end);
+                    selectizeControlEdit.setValue(response[0].incident_location, false);
+                    tinyMCE.activeEditor.setContent(response[0].incident_detail);
+                    $('#incident_affected_edit').val(response[0].incident_affected);
+                    $('#incident_remark_edit').val(response[0].incident_remark);
+                    $("input[name='incident_status_edit']:checked").val(response[0].incident_status);
+                }
+            })
+        });
+ 
+        //Meng-Update Data
+        $("#btn_update_data").on('click',function(){
+            // var noinduk = $('input[name="noinduk_edit"]').val();
+            // var nama = $('input[name="nama_edit"]').val();
+            // var alamat = $('input[name="alamat_edit"]').val();
+            // var hobi = $('input[name="hobi_edit"]').val();
+            var incident_id = $('#incident_id_edit').val();
+            var incident_name = $('#incident_name_edit').val();
+            var incident_date = $('#incident_date_edit').val();
+            var incident_time_begin = $('#incident_time_begin_edit').val();
+            var incident_time_end = $('#incident_time_end_edit').val();
+            var incident_location = selectizeControlEdit.items[0];
+            var incident_detail = tinymce.activeEditor.getContent();
+            var incident_affected = $('#incident_affected_edit').val();
+            //var incident_picture_name = $('')
+            var incident_remark = $('#incident_remark_edit').val();
+            var incident_status = $("input[name='incident_status_edit']:checked").val();
+            $.ajax({
+                url: '<?php echo base_url(); ?>C_Index/updateData',
+                type: 'POST',
+                data: {incident_id:incident_id,incident_name:incident_name,incident_date:incident_date,incident_time_begin:incident_time_begin,incident_time_end:incident_time_end,incident_location:incident_location,incident_detail:incident_detail, incident_affected:incident_affected, incident_remark:incident_remark, incident_status:incident_status},
+                success: function(response){
+                    $('#incident_name_edit').val("");
+                    $('#incident_date_edit').val("");
+                    $('#incident_time_begin_edit').val("");
+                    $('#incident_time_end_edit').val("");
+                    selectizeControlEdit.clear();
+                    tinyMCE.activeEditor.setContent('');
+                    $('#incident_affected_edit').val("");
+                    $('#incident_remark_edit').val("");
+                    $('#incident_status_edit').val("");
+                    $("#editIncidentModal").modal('hide');
+                    tampil_data();
+                }
+            })
+ 
+        });
+    });
+    
+
+      //Menambahkan Data ke database
         // $("#btn_add_data").on('click',function(e){
 
         //     e.preventDefault();
@@ -764,81 +896,9 @@ tinymce.init({
         //      }
         //   });
         // });
-
-
-        
-
-
-        //Memunculkan modal edit
-        $("#tbl_data").on('click','.btn_edit',function(){
-            var incident_id = $(this).attr('data-id');
-            console.log(incident_id);
-            //jQuery.noConflict();
-            
-            //var incident_id = 
-            $.ajax({
-                url: '<?php echo base_url(); ?>C_Index/editData',
-                type: 'POST',
-                data: {incident_id:incident_id},
-                dataType: 'json',
-                success: function(response){
-                    console.log('ok');
-                    console.log(response[0].incident_name);
-                    $("#editIncidentModal").modal('show');
-                    $('#incident_id_edit').val(response[0].incident_id);
-                    $('#incident_name_edit').val(response[0].incident_name);
-                    $('#incident_date_edit').val(response[0].incident_date);
-                    $('#incident_time_begin_edit').val(response[0].incident_time_begin);
-                    $('#incident_time_end_edit').val(response[0].incident_time_end);
-                    selectizeControlEdit.setValue(response[0].incident_location, false);
-                    tinyMCE.activeEditor.setContent(response[0].incident_detail);
-                    $('#incident_affected_edit').val(response[0].incident_affected);
-                    $('#incident_remark_edit').val(response[0].incident_remark);
-                    $("input[name='incident_status_edit']:checked").val(response[0].incident_status);
-                }
-            })
-        });
- 
-        //Meng-Update Data
-        $("#btn_update_data").on('click',function(){
-            // var noinduk = $('input[name="noinduk_edit"]').val();
-            // var nama = $('input[name="nama_edit"]').val();
-            // var alamat = $('input[name="alamat_edit"]').val();
-            // var hobi = $('input[name="hobi_edit"]').val();
-            var incident_id = $('#incident_id_edit').val();
-            var incident_name = $('#incident_name_edit').val();
-            var incident_date = $('#incident_date_edit').val();
-            var incident_time_begin = $('#incident_time_begin_edit').val();
-            var incident_time_end = $('#incident_time_end_edit').val();
-            var incident_location = selectizeControlEdit.items[0];
-            var incident_detail = tinymce.activeEditor.getContent();
-            var incident_affected = $('#incident_affected_edit').val();
-            //var incident_picture_name = $('')
-            var incident_remark = $('#incident_remark_edit').val();
-            var incident_status = $("input[name='incident_status_edit']:checked").val();
-            $.ajax({
-                url: '<?php echo base_url(); ?>C_Index/updateData',
-                type: 'POST',
-                data: {incident_id:incident_id,incident_name:incident_name,incident_date:incident_date,incident_time_begin:incident_time_begin,incident_time_end:incident_time_end,incident_location:incident_location,incident_detail:incident_detail, incident_affected:incident_affected, incident_remark:incident_remark, incident_status:incident_status},
-                success: function(response){
-                    $('#incident_name_edit').val("");
-                    $('#incident_date_edit').val("");
-                    $('#incident_time_begin_edit').val("");
-                    $('#incident_time_end_edit').val("");
-                    selectizeControlEdit.clear();
-                    tinyMCE.activeEditor.setContent('');
-                    $('#incident_affected_edit').val("");
-                    $('#incident_remark_edit').val("");
-                    $('#incident_status_edit').val("");
-                    $("#editIncidentModal").modal('hide');
-                    tampil_data();
-                }
-            })
- 
-        });
-    });
-    
 </script>
+
+
 
 
 <!-- <form>

@@ -55,7 +55,7 @@ class C_Index extends CI_Controller {
 			$row[] = $data_incident->incident_remark;
 			$row[] = $data_incident->incident_status;
 			//$row[] = '<a class="btn btn-success btn-sm"><i class="fa fa-edit"></i> </a><a class="btn btn-danger btn-sm "><i class="fa fa-trash"></i> </a>';
-			$row[] = '<span><a href="#" class="btn btn-primary btn_edit" data-id="'.$data_incident->incident_id.'">Edit</a> <button data-id="'.$data_incident->incident_id .'" class="btn btn-danger btn_hapus">Hapus</button></span>';
+			$row[] = '<span><a href="#" class="btn btn-primary btn_edit" data-id="'.$data_incident->incident_id.'">Edit</a> <button data-id="'.$data_incident->incident_id .'" class="btn btn-danger btn_hapus">Hapus</button> <button data-id="'.$data_incident->incident_id .'" class="btn btn-warning btn_tampil_foto">Lihat Foto</button></span>';
 			$data[] = $row;
 		}
 		$output = array(
@@ -74,21 +74,16 @@ class C_Index extends CI_Controller {
 		$incident_id = $this->input->post('incident_id');
 		$img_name = $this->M_Incident->getImageNameByID($incident_id)->incident_picture_name;
 		$data = $this->M_Incident->deleteData($incident_id);
-		$img_hapus = unlink("uploads/".$img_name.".jpg");
-		if($img_hapus == false){
-			unlink("uploads/".$img_name.".png");
-		}
+		$glob_find = glob("uploads/".$img_name."*");
+		unlink($glob_find[0]);
+		// $img_hapus = unlink("uploads/".$img_name.".jpg");
+		// if($img_hapus == false){
+		// 	unlink("uploads/".$img_name.".png");
+		// }
 		//$img_hapus = glob('"'.$img_name.'.*'.'"');
 		//array_map("unlink", glob('"'.$img_name.'.*'.'"'));
 		//unlink("uploads/".glob($img_name.'*'));
 		echo json_encode($data);
-	}
-
-	function glob_data(){
-		$img_name = $this->M_Incident->getImageNameByID('86')->incident_picture_name;
-		$img_hapus = glob('"'.$img_name.'.*'.'"');
-		echo $img_name;
-		print_r(glob("C_Index.*")) ;
 	}
 
 	function tambahData()
@@ -199,16 +194,57 @@ class C_Index extends CI_Controller {
 		echo json_encode($dataSave);
 	}
 
-	function get_kategori(){
-		$x['data'] = $this->M_Kategori->get_kategori();
-		$this->load->view('V_Kategori',$x);
-	}
+	//Ambil nama gambar dari DB
+	function ambilDataGambar(){
+		$incident_id = $this->input->post('incident_id');
+		$data = $this->M_Incident->getImageNameByID($incident_id);
 
-	function get_subkategori(){
-		$id = $this->input->post('id');
-		$data = $this->M_Kategori->get_subkategori($id);
 		echo json_encode($data);
 	}
+
+	function cekEkstensi(){
+		$incident_id = "91";
+		$data = $this->M_Incident->getImageNameByID($incident_id)->incident_picture_name;
+
+		// $this->load->library('image_lib');
+		// $img = "uploads/".$data;
+		// $img_ext = $this->image_lib->explode_name($img);
+
+		// echo $img;
+		// echo $img_ext['ext'];
+
+		// $path = "uploads/";
+		// echo $path . $data .'*';
+		$glob_find = glob("uploads/".$data."*");
+		echo $glob_find[0];
+		if(unlink($glob_find[0])){
+			echo "Berhasil";
+		}
+		//print_r(glob("uploads/Kejadian OOO_2022-11-04*"));
+		//echo glob($path . $data .'*');
+
+		// if(unlink(realpath(glob($path . $data .'*')))){
+		// 	echo "berhasil";
+		// }else {
+		// 	echo "error";
+		// }
+
+		// $incident_id = $this->input->post('incident_id');
+		// $data = $this->M_Incident->getImageNameByID($incident_id);
+
+		//echo json_encode($data);
+	}
+
+	// function get_kategori(){
+	// 	$x['data'] = $this->M_Kategori->get_kategori();
+	// 	$this->load->view('V_Kategori',$x);
+	// }
+
+	// function get_subkategori(){
+	// 	$id = $this->input->post('id');
+	// 	$data = $this->M_Kategori->get_subkategori($id);
+	// 	echo json_encode($data);
+	// }
 
 	function export_to_excel(){
 		$spreadsheet = new Spreadsheet();
