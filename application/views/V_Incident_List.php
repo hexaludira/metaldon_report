@@ -5,41 +5,50 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Incident List</title>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap-4/css/bootstrap.css'); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.6/css/selectize.bootstrap4.css">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- <link rel="stylesheet" href="<?= base_url('assets/css/dataTables.bootstrap4.css');?>"> -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" style="stylesheet"/>
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" style="stylesheet"/> -->
 
 
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/bootstrap-4/js/bootstrap.min.js'); ?>"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.4.1/sifter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.min.js"></script>
     <script src="<?=base_url('assets');?>/tinymce/tinymce.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.6/js/selectize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js"></script>
 
 </head>
-<body style="margin: 20px;">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <b class="col-md-9">Incident List</b>
+<body style="margin: 5px;">
+    <div class="card border-secondary mb-3">
+        <div class="card-header text-white bg-secondary mb-3 container-fluid">
             
-              <button data-toggle="modal" data-target="#addIncidentModal" class="btn btn-success">Tambah Data</button>
-              <a class="btn btn-warning" href="<?php echo base_url().'C_Index/export_to_excel';?>">Export to Excel</a>
+              <div class="row">
+                <div class="col-md-8">
+                  <h2>Incident List</h2>
+                </div>
+                <div class="col-sm-4 float-right">
+                  <button data-toggle="modal" data-target="#addIncidentModal" class="btn btn-success">Tambah Data</button>
+                  <a class="btn btn-warning" href="<?php echo base_url().'C_Index/export_to_excel';?>">Export to Excel</a>
+                  <button class="btn btn-secondary btn_alert">Tes Alert</button>
+                </div>
+                
+              </div>
+              
       
             
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="Incident_Table">
                     <thead>
@@ -73,8 +82,9 @@
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">×</button>
             <h4 class="modal-title">Insert New Incident</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            
 
           </div>
           <div class="modal-body">
@@ -88,24 +98,24 @@
 				            <div class="row">
 				              <div class="col-md-6">
 				                <div class="form-group">
-				                  <label><h4>Incident</h4></label>
+				                  <label><h5>Incident</h5></label>
 				                  <input type="text" class="form-control" id="incident_name" name="incident_name" placeholder="Ex: Listrik mati">
 				                </div>
 				                <div class="form-group">
-				                  <label><h4>Date</h4></label>
+				                  <label><h5>Date</h5></label>
 				                 <input type="date" id="incident_date" name="incident_date" class="form-control" placeholder="<?php date_default_timezone_set("Asia/Jakarta");echo date("m d Y");?>">
 
 				                  <!-- <vuejs-datepicker input-class="form-control" type="text" placeholder="dd mm yyyy" name="incident_date" typeable value="<?php date_default_timezone_set("Asia/Jakarta");echo date("m d Y");?>"></vuejs-datepicker> -->
 				                </div>
 				                <div class="form-group">
 				                  <!-- <vue-timepicker name="incident_time">ddada</vue-timepicker> -->
-				                  <label><h4>Time</h4></label>
+				                  <label><h5>Time</h5></label>
 				                  <div class="row">
 				                    <div class="col-sm-4">
 				                      <input type="time" class="form-control" id="incident_time_begin" name="incident_time_begin" value="00:00">
 				                    </div>
 				                    <div class="col-sm-4 center">
-				                      <h4>until</h4>
+				                      <h5>until</h5>
 				                    </div>
 				                    <div class="col-sm-4">        
 				                      <input type="time" class="form-control" id="incident_time_end" name="incident_time_end" value="23:59">
@@ -186,7 +196,7 @@
           </div>
           <div class="modal-footer">
            <button type="button" class="btn btn-success" id="btn_add_data">Simpan</button>
-           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
  
@@ -202,8 +212,9 @@
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
+            <h5 class="modal-title">Edit Data</h5>
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h4 class="modal-title">Edit Data</h4>
+            
           </div>
           <div class="modal-body">
             
@@ -313,7 +324,7 @@
           </div>
           <div class="modal-footer">
            <button type="button" class="btn btn-success" id="btn_update_data">Update</button>
-           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
  
@@ -326,8 +337,9 @@
         <!-- Modal Content -->
         <div class="modal-content">
           <div class="modal-header">
+              <h5 class="modal-title">Hapus Data</h5>
               <button type="button" class="close" data-dismiss="modal">X</button>
-            <h4 class="modal-title">Hapus Data</h4>
+              
           </div>
           <div class="modal-body">
             <h4>Yakin ingin hapus data?</h4>
@@ -335,7 +347,7 @@
 
           <div class="modal-footer">
            <button type="button" class="btn btn-danger" id="btn_confirm_hapus">Hapus</button>
-           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>      
         </div>
       </div>
@@ -348,8 +360,9 @@
         <!-- Modal Content -->
         <div class="modal-content">
           <div class="modal-header">
+              <h5 class="modal-title">Foto</h5>
               <button type="button" class="close" data-dismiss="modal">X</button>
-            <h4 class="modal-title">Foto</h4>
+            
           </div>
           <div class="modal-body">
             <img id="tampil_foto" width="100%" src="https://www.tutsmake.com/wp-content/uploads/2019/01/no-image-tut.png">
@@ -357,7 +370,7 @@
 
           <div class="modal-footer">
            <!-- <button type="button" class="btn btn-danger" id="btn_confirm_hapus">Hapus</button> -->
-           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>      
         </div>
       </div>
@@ -568,6 +581,7 @@ tinymce.init({
               data: {incident_id:incident_id},
               success: function(response){
                   $("#confirmHapusModal").modal('hide');
+                  notif_hapus_data_berhasil();
                   table.ajax.reload(null, false);
                   //window.location.reload();
                   //$('#Incident_Table').DataTable().ajax.reload();
@@ -577,6 +591,22 @@ tinymce.init({
             })
           })
         });
+
+        function notif_add_data_berhasil(){
+          Swal.fire(
+            'Tambah Data Berhasil',
+            '',
+            'success'
+            );
+        }
+
+        function notif_hapus_data_berhasil(){
+          Swal.fire(
+            'Data Berhasil Dihapus',
+            '',
+            'success'
+          );
+        }
 
         //Reset field gambar
         function reset_field_gambar(){
@@ -730,12 +760,15 @@ tinymce.init({
              cache:false,
              async:true,
              success: function(data){
-              alert("Upload image berhasil");
+              notif_add_data_berhasil();
+              //alert("Upload image berhasil");
              }
           });
         }
 
-        
+        $(".btn_alert").click(function(){
+          notif_add_data_berhasil();
+        });
 
 
         //Memunculkan modal edit
