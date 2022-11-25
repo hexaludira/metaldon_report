@@ -190,17 +190,24 @@ class C_Index extends CI_Controller {
 	function ambilDataGambar(){
 		$incident_id = $this->input->post('incident_id');
 		$img_name = $this->M_Incident->getImageNameByID($incident_id)->incident_picture_name;
+		$glob_find = glob("uploads/".$img_name."*");
+		// if ($img_name != null){
+		// 	$glob_find = glob("uploads/".$img_name."*");
+		// 	$data = $glob_find[0];
+		// 	//echo $data;
+		// } else {
+		// 	$data = null;
+		// 	echo $data;
+		// }
 		
-		if ($img_name != null){
-			$glob_find = glob("uploads/".$img_name."*");
+		if (($img_name != null) && ($glob_find)){
 			$data = $glob_find[0];
-			//echo $data;
+
+		} else if (($img_name != null) && ($glob_find == null)){
+			$data = null;
 		} else {
 			$data = null;
-			echo $data;
 		}
-		
-
 		// if($glob_find){
 		// 	$data = $glob_find[0];
 		// }else {
@@ -208,9 +215,6 @@ class C_Index extends CI_Controller {
 		// 	$data = null;
 		// 	echo $data;
 		// }
-
-		
-
 
 		echo json_encode($data);
 	}

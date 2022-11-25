@@ -417,8 +417,8 @@ tinymce.init({
           ],
         });
 
-        $("#btn_add_data").on('click',function(){
-          //e.preventDefault();
+        $("#btn_add_data").on('click',function(e){
+          e.preventDefault();
           $.when(addData()).done(upload_image());
         });
 
