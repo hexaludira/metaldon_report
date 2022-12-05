@@ -141,14 +141,41 @@ class C_Index extends CI_Controller {
 		$config['upload_path'] = "./uploads";
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['file_name'] = $data->incident_picture_name;
+		//$config['overwrite'] = TRUE;
 		//$config['encrypt_name'] = TRUE;
 
 		$this->load->library('upload',$config);
-		if($this->upload->do_upload("incident_picture")){
+		if($this->upload->do_upload("incident_picture_edit")){
 			$data = array('upload_data' => $this->upload->data());
 
 			
-			//$img_name = $data['upload_data']['file_name'];
+			$img_name = $data['upload_data']['file_name'];
+			$fileExt = pathinfo($img_name, PATHINFO_EXTENSION);
+			echo $img_name;
+			//$image = $data['upload_data']['file_name'];
+
+			//$result = $this->M_Incident->simpanUpload($img_name);
+			//echo json_encode($result);
+
+		}
+	}
+
+	function doUploadEdit(){
+		//$haha = $this->input->post('jdskjfhksj');
+		$data = $this->input->post();
+		$config['upload_path'] = "./uploads";
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['file_name'] = $data['incident_picture_name'];
+		$config['overwrite'] = TRUE;
+
+		$this->load->library('upload',$config);
+		if($this->upload->do_upload("incident_picture_edit")){
+			$data = array('upload_data' => $this->upload->data());
+
+			
+			$img_name = $data['upload_data']['file_name'];
+			$fileExt = pathinfo($img_name, PATHINFO_EXTENSION);
+			echo $img_name;
 			//$image = $data['upload_data']['file_name'];
 
 			//$result = $this->M_Incident->simpanUpload($img_name);
@@ -158,14 +185,50 @@ class C_Index extends CI_Controller {
 	}
 
 	function editData(){
+		//$row = array();
 		$incident_id = $this->input->post('incident_id');
 		$data = $this->M_Incident->getDataByID($incident_id);
+		$img_name = $data[0]->incident_picture_name;
+		$glob_find = glob("uploads/".$img_name."*");
+
+
+		if (($img_name != null) && ($glob_find)){
+			// $img_name = $glob_find[0];
+			$data[0]->incident_picture_preview = $glob_find[0];
+			//$data[0]->incident_picture_name = $glob_find[0];
+
+		} else if (($img_name != null) && ($glob_find == null)){
+			$data[0]->incident_picture_preview = null;
+		} else {
+			$data[0]->incident_picture_preview = null;
+		}
+
+		//echo $img_name;
+		//$data[] = $row;
 		echo json_encode($data);
 	}
 
+	
+
 	function updateData(){
 		//$incident_id = $this->input->post('incident_id');
+		$img_name_update;
 		$data = $this->input->post();
+
+		// $img_name_old = $data['incident_picture_name'];
+
+		// $img_name_new = $data['incident_name'].'_'.$data['incident_date'];
+
+		// if ($img_name_old == $img_name_new) {
+		// 	$img_name_update = $img_name_old;
+		// } else {
+		// 	// $glob_find = glob("uploads/".$img_name_old."*");
+
+		// 	// rename(, $img_name_new);
+		// 	$img_name_update = $img_name_new;
+		// }
+
+		//echo $img_name_old;
 
 		$dataAll = [
 				'incident_name' => $data['incident_name'],
@@ -175,13 +238,14 @@ class C_Index extends CI_Controller {
 				'incident_location' => $data['incident_location'],
 				'incident_detail' => $data['incident_detail'],
 				'incident_affected' => $data['incident_affected'],
-				'incident_picture_name' => $img_name,
+				'incident_picture_name' => $data['incident_picture_name'],
 				'incident_remark' => $data['incident_remark'],
 				'incident_status' => $data['incident_status'],
 		];
 
 		$dataSave = $this->M_Incident->updateData($data['incident_id'],$dataAll);
 		echo $data['incident_id'];
+		//echo $img_name_update;
 
 		echo json_encode($dataSave);
 	}
@@ -208,12 +272,14 @@ class C_Index extends CI_Controller {
 		} else {
 			$data = null;
 		}
-		// if($glob_find){
-		// 	$data = $glob_find[0];
-		// }else {
-		// 	//echo "Data tidak ada";
-		// 	$data = null;
-		// 	echo $data;
+
+		/* Untuk cek ekstensi */
+		// if (isset($IMG) && !empty($IMG)) {
+		//     $imageType = "png";
+
+		//     if (strpos($IMG, ".png") === false) {
+		//         $imageType = "jpg";
+		//     }
 		// }
 
 		echo json_encode($data);
