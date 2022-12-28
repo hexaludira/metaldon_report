@@ -2,12 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_Datatable extends CI_Model {
-	var $table = 'tbl_incident_list';
-	var $column_order = array(null,'incident_name','incident_date','incident_time_begin','incident_time_end','incident_location','incident_detail','incident_affected','incident_remark','incident_status');
-	var $column_search = array('incident_name','incident_date','incident_time_begin','incident_time_end','incident_location','incident_detail','incident_affected','incident_remark','incident_status');
+	var $table = 'tbl_metaldon_problem';
+	var $column_order = array(null,'problem_date','problem_location','problem_name','problem_detail','problem_status','problem_repair_date','problem_remark');
+	var $column_search = array('problem_date','problem_location','problem_name','problem_detail','problem_status','problem_repair_date','problem_remark');
 
-	var $order = array('incident_id' => 'asc');
+	var $order = array('problem_id' => 'asc');
 
+	//Untuk menampilkan datatabel sesuai search
 	function _get_datatables_query()
 	{
 		$this->db->from($this->table);
